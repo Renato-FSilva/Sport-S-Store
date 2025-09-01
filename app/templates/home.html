@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <title>Home</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#140e87; color:#333; text-align:center; }
+    header, footer { background:#fde3a7; padding:1rem; }
+    button { padding:10px 20px; background:#140e87; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <header><h1>Sports Store</h1></header>
+
+  <main>
+    <h2>Bem-vindo à Home!</h2>
+    <p>Você está logado.</p>
+    <button id="logoutBtn">Sair</button>
+  </main>
+
+  <footer>© 2025 Sports Store</footer>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if(!token){
+      window.location.href = 'login.html';
+    }
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
