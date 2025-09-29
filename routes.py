@@ -2,15 +2,17 @@ from flask import Blueprint, render_template
 
 main = Blueprint('main', __name__)
 
-@main.route('/')
-def index():
-    return render_template('home.html')
+# Register
+@main.route('/register')
+def register_page():
+    return render_template('register.html')
 
+# Login
 @main.route('/login')
 def login_page():
     return render_template('login.html')
 
-
-@main.route('/cadastro')
-def cadastro():
-    return render_template('cadastro.html')
+# Home do usuário normal
+@main.route('/home')
+def home():
+    return render_template('home.html')

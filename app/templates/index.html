@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Correção para hero background -->
+  <style>
+    .hero {
+      background-image: url("{{ url_for('static', filename='images/fachada.png') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Sports Store Logo">
+      <span>Sports Store</span>
+    </div>
+    <div class="header-buttons">
+      <a href="/login" class="btn-secondary">Login</a>
+      <a href="/register" class="btn-primary">Criar Conta</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Bem-vindo à <span>Sports Store</span></h1>
+      <p>A melhor loja online para moda esportiva, acessórios e muito mais.</p>
+      <div class="hero-buttons">
+        <a href="/register" class="btn-primary">Criar Conta</a>
+        <a href="/login" class="btn-secondary">Já tenho conta</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase Section -->
+  <section class="showcase">
+    <h2>Conheça Nossa Loja</h2>
+
+    <div class="showcase-item">
+      <img src="{{ url_for('static', filename='images/fachada.png') }}" alt="Fachada da Loja">
+      <div class="showcase-text">
+        <h3>Fachada - Paulista</h3>
+        <p>Localizada na icônica Avenida Paulista, nossa loja flagship reflete modernidade e inovação no mundo esportivo. Uma vitrine que conecta a marca com o coração de São Paulo.</p>
+      </div>
+    </div>
+
+    <div class="showcase-item reverse">
+      <img src="{{ url_for('static', filename='images/interior.png') }}" alt="Interior da Loja">
+      <div class="showcase-text">
+        <h3>Interior Moderno</h3>
+        <p>Ambiente futurista com iluminação em LED azul, displays tecnológicos e produtos premium. Um espaço criado para oferecer a melhor experiência de compra esportiva.</p>
+      </div>
+    </div>
+
+    <div class="showcase-item">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Identidade da Marca">
+      <div class="showcase-text">
+        <h3>Nossa Identidade</h3>
+        <p>A águia representa força, visão e superação — valores que traduzem a essência da Sports Store. Mais que uma marca, um estilo de vida esportivo de alta performance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Logo" class="footer-logo">
+      <p>A Sports Store é sua loja online para moda esportiva de qualidade.</p>
+    </div>
+
+    <div class="footer-center">
+      <h4>Suporte</h4>
+      <p>Email: contato@sportsstore.com</p>
+      <p>Telefone: (11) 99999-9999</p>
+    </div>
+
+ <div class="footer-right">
+  <h4>Redes Sociais</h4>
+  <div class="social-icons">
+    <a href="https://instagram.com/sports_store" target="_blank">
+      <i class="fab fa-instagram"></i> @sports_store
+    </a>
+    <a href="https://facebook.com/sports_store" target="_blank">
+      <i class="fab fa-facebook"></i> @sports_store
+    </a>
+    <a href="https://twitter.com/sports_store" target="_blank">
+      <i class="fab fa-twitter"></i> @sports_store
+    </a>
+  </div>
+</div>
+
+
+    <div class="footer-bottom">
+      © 2025 Sports Store. Todos os direitos reservados.
+    </div>
+  </footer>
+
+</body>
+</html>

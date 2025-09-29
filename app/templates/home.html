@@ -2,36 +2,245 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="style.css">
-  <title>Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Store - Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#140e87; color:#333; text-align:center; }
-    header, footer { background:#fde3a7; padding:1rem; }
-    button { padding:10px 20px; background:#140e87; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:20px; }
+    /* Hero */
+    .hero-home {
+      text-align: center;
+      padding: 6rem 2rem;
+      color: #fff;
+      background: url("{{ url_for('static', filename='images/fachada.png') }}") no-repeat center center/cover;
+      min-height: 70vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .hero-home::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 14, 135, 0.6);
+    }
+    .hero-home-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-home h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+    .hero-home span {
+      color: #00f2fe;
+    }
+    .hero-home p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Coleções */
+    .collections-section {
+      padding: 4rem 2rem;
+      background: #fff;
+      text-align: center;
+    }
+    .collections-section h2 {
+      font-size: 2rem;
+      color: #140e87;
+      margin-bottom: 2rem;
+    }
+    .collections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    .collection-item {
+      position: relative;
+      display: block;
+      border-radius: 18px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .collection-item img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 18px;
+      transition: transform 0.4s ease;
+    }
+    .collection-item span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      background: linear-gradient(to top, rgba(20,14,135,0.9), rgba(20,14,135,0));
+      color: #fff;
+      text-align: center;
+      font-size: 1.2rem;
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+    }
+    .collection-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .collection-item:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(to left, #140e87, #4a90e2);
+      padding: 1.5rem 3rem;
+    }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo img {
+      height: 80px;
+    }
+    .logo span {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .btn-sair {
+      padding: 10px 22px;
+      margin-left: 40px;
+      background: #00f2fe;
+      color: #140e87;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0px 2px 8px rgba(0, 242, 254, 0.25);
+    }
+    .btn-sair:hover {
+      background: #00cbe6;
+      transform: translateY(-2px);
+      box-shadow: 0px 4px 12px rgba(0, 242, 254, 0.4);
+    }
   </style>
 </head>
 <body>
-  <header><h1>Sports Store</h1></header>
 
-  <main>
-    <h2>Bem-vindo à Home!</h2>
-    <p>Você está logado.</p>
-    <button id="logoutBtn">Sair</button>
-  </main>
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Sports Store Logo">
+      <span>Sports Store</span>
+    </div>
+    <button id="logoutBtn" class="btn-sair">Sair</button>
+  </div>
+</header>
 
-  <footer>© 2025 Sports Store</footer>
+<!-- Hero -->
+<section class="hero-home">
+  <div class="hero-home-content">
+    <h1>Bem-vindo, <span id="welcome-name"></span> à <span>Sports Store</span></h1>
+    <p>A melhor loja online para moda esportiva, acessórios e muito mais.</p>
+  </div>
+</section>
 
-  <script>
-    const token = localStorage.getItem('token');
-    if(!token){
-      window.location.href = 'login.html';
+<!-- Coleções -->
+<section class="collections-section">
+  <h2>Confira nossas Coleções</h2>
+  <div id="collections" class="collections"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-left">
+    <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Logo" class="footer-logo">
+    <p>A Sports Store é sua loja online para moda esportiva de qualidade.</p>
+  </div>
+  <div class="footer-center">
+    <h4>Suporte</h4>
+    <p>Email: contato@sportsstore.com</p>
+    <p>Telefone: (11) 99999-9999</p>
+  </div>
+  <div class="footer-right">
+    <h4>Redes Sociais</h4>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-instagram"></i> @sports_store</a>
+      <a href="#"><i class="fab fa-facebook"></i> @sports_store</a>
+      <a href="#"><i class="fab fa-twitter"></i> @sports_store</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 Sports Store. Todos os direitos reservados.
+  </div>
+</footer>
+
+<script>
+  const token = localStorage.getItem('token');
+  if(!token){
+    window.location.href = '/login';
+  }
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  });
+
+  // Buscar coleções do backend
+  async function loadCollections() {
+    try {
+      const res = await fetch('/admin/collections');
+      if(res.ok){
+        const data = await res.json();
+        const container = document.getElementById('collections');
+        container.innerHTML = "";
+        data.forEach(col => {
+          container.innerHTML += `
+            <a href="/colecao/${col.id}" class="collection-item">
+              <img src="/static/images/${col.image || 'no-image.png'}" alt="${col.name}">
+              <span>${col.name}</span>
+            </a>`;
+        });
+      } else {
+        console.error("Erro ao buscar coleções");
+      }
+    } catch(err){
+      console.error("Erro:", err);
     }
+  }
 
-    const logoutBtn = document.getElementById('logoutBtn');
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.href = 'login.html';
-    });
-  </script>
+  loadCollections();
+
+  // Mostrar o nome do usuário no título
+  document.addEventListener('DOMContentLoaded', () => {
+    const welcomeEl = document.getElementById('welcome-name');
+    const storedName = localStorage.getItem('firstName') || localStorage.getItem('username') || "";
+
+    if (storedName && welcomeEl) {
+      let name = storedName.trim();
+      if (name.includes('@')) name = name.split('@')[0];
+      name = name.split(/\s+/)[0];
+      name = name.charAt(0).toUpperCase() + name.slice(1);
+      welcomeEl.textContent = name;
+    }
+  });
+</script>
 </body>
 </html>

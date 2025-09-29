@@ -4,57 +4,78 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <title>Cadastro</title>
-  <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#140e87; color:#333; }
-    header, footer { background:#fde3a7; padding:1rem; text-align:center; }
-    .container { display:flex; justify-content:center; align-items:center; height:80vh; }
-    form { background:#fde3a7; padding:2rem; border-radius:12px; width:350px; }
-    input { width:100%; padding:8px; margin:10px 0; }
-    button { width:100%; padding:10px; background:#140e87; color:#fff; border:none; border-radius:8px; cursor:pointer; }
-    a { color:#140e87; text-decoration:none; display:block; margin-top:10px; text-align:center; }
-  </style>
 </head>
 <body>
-  <header><h1>Sports Store</h1></header>
-
   <div class="container">
-    <form id="registerForm">
-      <h2 style="text-align:center;color:#140e87">Cadastro</h2>
-      <input type="text" name="username" placeholder="Usuário" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Senha" required>
-      <button type="submit">Cadastrar</button>
-      <a href="/login">Já tem conta? Login</a>
-    </form>
+    <!-- Lado da logo -->
+    <div class="logo-side">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Sports Store Logo">
+    </div>
+
+    <!-- Lado do formulário -->
+    <div class="form-side">
+      <form id="registerForm">
+        <h2>Criar uma conta</h2>
+        <p class="subtitle">Preencha os campos abaixo para se cadastrar</p>
+
+        <input type="text" name="username" placeholder="Usuário" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Senha (mín. 6 caracteres)" required>
+        
+        <button type="submit">Cadastrar</button>
+        <div id="msg"></div>
+        
+        <a href="/login">Já tem conta? Fazer login</a>
+      </form>
+    </div>
   </div>
 
-  <footer>© 2025 Sports Store</footer>
-
+  
 <script>
 const form = document.getElementById('registerForm');
+const msg = document.getElementById('msg');
+const btn = form.querySelector("button");
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const data = {
-    username: form.username.value,
-    email: form.email.value,
-    password: form.password.value
+    username: form.username.value.trim(),
+    email: form.email.value.trim(),
+    password: form.password.value.trim()
   };
+
+  if(data.password.length < 6){
+    msg.style.color = "red";
+    msg.textContent = "A senha deve ter pelo menos 6 caracteres.";
+    return;
+  }
+
+  btn.disabled = true;
+  msg.textContent = "Cadastrando...";
+  msg.style.color = "black";
+
   try {
-    const res = await fetch('/register', {
+    const res = await fetch('/api/register', {  // 👈 agora chama a API correta
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(data)
     });
     const result = await res.json();
+
     if(res.ok){
-      alert(result.message);
-      // Redireciona para a rota do Flask
-      window.location.href = '/login';
+      msg.style.color = "green";
+      msg.textContent = result.message;
+      setTimeout(() => window.location.href = '/login', 1500);
     } else {
-      alert(result.message);
+      msg.style.color = "red";
+      msg.textContent = result.message || "Erro ao cadastrar.";
     }
   } catch(err){
-    alert('Erro ao cadastrar');
+    msg.style.color = "red";
+    msg.textContent = "Erro ao conectar com o servidor.";
+  } finally {
+    btn.disabled = false;
   }
 });
 </script>

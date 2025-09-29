@@ -4,58 +4,88 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <title>Login</title>
-  <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#140e87; color:#333; }
-    header, footer { background:#fde3a7; padding:1rem; text-align:center; }
-    .container { display:flex; justify-content:center; align-items:center; height:80vh; }
-    form { background:#fde3a7; padding:2rem; border-radius:12px; width:350px; }
-    input { width:100%; padding:8px; margin:10px 0; }
-    button { width:100%; padding:10px; background:#140e87; color:#fff; border:none; border-radius:8px; cursor:pointer; }
-    a { color:#140e87; text-decoration:none; display:block; margin-top:10px; text-align:center; }
-  </style>
 </head>
 <body>
-  <header><h1>Sports Store</h1></header>
-
   <div class="container">
-    <form id="loginForm">
-      <h2 style="text-align:center;color:#140e87">Login</h2>
-      <input type="text" name="username" placeholder="Usuário" required>
-      <input type="password" name="password" placeholder="Senha" required>
-      <button type="submit">Entrar</button>
-      <a href="/register">Não tem conta? Cadastre-se</a>
-    </form>
+    <!-- Lado da logo -->
+    <div class="logo-side">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Sports Store Logo">
+    </div>
+
+    <!-- Lado do formulário -->
+    <div class="form-side">
+      <form id="loginForm">
+        <h2>Entrar na minha conta</h2>
+        <p class="subtitle">Preencha os campos abaixo para acessar sua conta</p>
+
+        <input type="text" name="username" placeholder="Usuário" required>
+        <input type="password" name="password" placeholder="Senha" required>
+
+        <button type="submit">Entrar</button>
+        <div id="msg"></div>
+
+        <a href="/register">Não tem conta? Criar uma conta</a>
+      </form>
+    </div>
   </div>
 
-  <footer>© 2025 Sports Store</footer>
+<script>
+  const form = document.getElementById('loginForm');
+  const msg  = document.getElementById('msg');
+  const btn  = form.querySelector('button');
 
-  <script>
-    const form = document.getElementById('loginForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = {
-        username: form.username.value,
-        password: form.password.value
-      };
-      try {
-        const res = await fetch('/login', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(data)
-        });
-        const result = await res.json();
-        if(res.ok){
-          localStorage.setItem('token', result.access_token);
-          localStorage.setItem('username', data.username);
-          // Corrigido o typo aqui
-          window.location.href = '/';
-        } else {
-          alert(result.message);
-        }
-      } catch(err){
-        alert('Erro ao logar');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+      username: form.username.value.trim(),
+      password: form.password.value.trim()
+    };
+
+    btn.disabled = true;
+    msg.textContent = "Entrando...";
+    msg.style.color = "black";
+
+    try {
+      const res = await fetch('/api/login', {  // <- aqui!
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        // token + flags
+        localStorage.setItem('token', result.access_token);
+        localStorage.setItem('is_admin', result.is_admin ? '1' : '0');
+
+        // nome vindo do backend (preferível)
+        const rawName = (result.username || data.username || '').trim();
+        let first = rawName;
+        if (first.includes('@')) first = first.split('@')[0];
+        first = first.split(/\s+/)[0];
+        if (first) first = first.charAt(0).toUpperCase() + first.slice(1);
+
+        localStorage.setItem('username', rawName);
+        localStorage.setItem('firstName', first);
+
+        msg.style.color = "green";
+        msg.textContent = "Login realizado com sucesso!";
+
+        setTimeout(() => window.location.href = result.redirect, 600);
+      } else {
+        msg.style.color = "red";
+        msg.textContent = result.message || "Erro ao fazer login.";
       }
-    });
-  </script>
+    } catch (err) {
+      msg.style.color = "red";
+      msg.textContent = "Erro ao conectar com o servidor.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+
+
 </body>
 </html>
