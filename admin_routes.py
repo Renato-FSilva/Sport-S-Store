@@ -13,7 +13,7 @@ admin = Blueprint('admin', __name__)
 # -------------------------
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(os.path.dirname(BASE_DIR), "static", "images")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # cria a pasta se não existir
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # garante que a pasta existe
 
 
 # -------------------------
@@ -31,7 +31,12 @@ def dashboard():
 def list_users():
     users = User.query.all()
     return jsonify([
-        {"id": u.id, "username": u.username, "email": u.email, "is_admin": u.is_admin}
+        {
+            "id": u.id,
+            "username": u.username,
+            "email": u.email,
+            "is_admin": u.is_admin
+        }
         for u in users
     ])
 
@@ -40,6 +45,7 @@ def delete_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return {"message": "Usuário não encontrado"}, 404
+
     db.session.delete(user)
     db.session.commit()
     return {"message": "Usuário excluído com sucesso"}
@@ -51,12 +57,15 @@ def delete_user(user_id):
 @admin.route('/collections', methods=['GET'])
 def list_collections():
     collections = Collection.query.all()
-    return jsonify([{
-        "id": c.id,
-        "name": c.name,
-        "description": c.description,
-        "image": c.image
-    } for c in collections])
+    return jsonify([
+        {
+            "id": c.id,
+            "name": c.name,
+            "description": c.description,
+            "image": c.image
+        }
+        for c in collections
+    ])
 
 @admin.route('/collections', methods=['POST'])
 def create_collection():
@@ -83,6 +92,7 @@ def delete_collection(col_id):
     col = Collection.query.get(col_id)
     if not col:
         return {"message": "Coleção não encontrada"}, 404
+
     db.session.delete(col)
     db.session.commit()
     return {"message": "Coleção excluída com sucesso"}
@@ -94,47 +104,57 @@ def delete_collection(col_id):
 @admin.route('/products', methods=['GET'])
 def list_products():
     products = Product.query.all()
-    return jsonify([{
-        "id": p.id,
-        "name": p.name,
-        "description": getattr(p, "description", ""),   # agora retorna descrição
-        "price": float(p.price),
-        "quantity": getattr(p, "quantity", 0),
-        "image": getattr(p, "image", None),
-        "collection_id": getattr(p, "collection_id", None)
-    } for p in products])
+    return jsonify([
+        {
+            "id": p.id,
+            "name": p.name,
+            "description": getattr(p, "description", ""),
+            "price": float(p.price),
+            "stock": getattr(p, "stock", 0),  # <-- estoque certo
+            "image": getattr(p, "image", None),
+            "collection_id": getattr(p, "collection_id", None)
+        }
+        for p in products
+    ])
 
 @admin.route('/products', methods=['POST'])
 def create_product():
     name = request.form.get("name")
     description = request.form.get("description", "")
-    price = request.form.get("price")
-    quantity = request.form.get("quantity", 0)
+    price_raw = request.form.get("price")
+    quantity_raw = request.form.get("quantity", 0)
+    collection_id = request.form.get("collection_id")
     file = request.files.get("image")
 
-    # Converte valores
+    # trata preço
     try:
-        price = float(price) if price else 0.0
+        price_value = float(price_raw) if price_raw else 0.0
     except ValueError:
-        price = 0.0
+        price_value = 0.0
 
+    # trata estoque informado
     try:
-        quantity = int(quantity)
+        stock_value = int(quantity_raw) if quantity_raw else 0
     except ValueError:
-        quantity = 0
+        stock_value = 0
 
+    # salva imagem (se enviada)
     filename = None
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(UPLOAD_FOLDER, filename))
 
+    # cria produto usando o campo correto "stock"
     new_product = Product(
         name=name,
         description=description,
-        price=price,
-        quantity=quantity,
-        image=filename
+        price=price_value,
+        stock=stock_value,           # <-- importante
+        image=filename,
+        collection_id=collection_id,
+        is_active=True
     )
+
     db.session.add(new_product)
     db.session.commit()
     return {"message": "Produto criado com sucesso"}
@@ -144,6 +164,47 @@ def delete_product(prod_id):
     prod = Product.query.get(prod_id)
     if not prod:
         return {"message": "Produto não encontrado"}, 404
+
     db.session.delete(prod)
     db.session.commit()
     return {"message": "Produto excluído com sucesso"}
+
+@admin.route('/products/<int:prod_id>', methods=['PUT'])
+def update_product(prod_id):
+    prod = Product.query.get(prod_id)
+    if not prod:
+        return jsonify({"message": "Produto não encontrado"}), 404
+
+    data = request.get_json() or {}
+
+    # Campos que o admin pode alterar
+    new_name = data.get("name")
+    new_description = data.get("description")
+    new_price = data.get("price")
+    new_stock = data.get("stock")
+    new_collection_id = data.get("collection_id")  # opcional
+
+    if new_name is not None:
+        prod.name = new_name
+
+    if new_description is not None:
+        prod.description = new_description
+
+    if new_price is not None:
+        try:
+            prod.price = float(new_price)
+        except ValueError:
+            return jsonify({"message": "Preço inválido"}), 400
+
+    if new_stock is not None:
+        try:
+            prod.stock = int(new_stock)
+        except ValueError:
+            return jsonify({"message": "Estoque inválido"}), 400
+
+    if new_collection_id is not None and new_collection_id != "":
+        prod.collection_id = new_collection_id
+
+    db.session.commit()
+
+    return jsonify({"message": "Produto atualizado com sucesso"}), 200

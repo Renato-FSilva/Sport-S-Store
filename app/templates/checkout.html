@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Compra - Sports Store</title>
+
+  <style>
+    body {
+      background: #f5f6ff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* CARD PRINCIPAL */
+    .checkout-card {
+      background: #fff;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.12);
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    /* LADO ESQUERDO (INFO PRODUTO + QUANTIDADE) */
+    .left-side h1 {
+      margin: 0 0 1.5rem;
+      font-size: 1.25rem;
+      color: #140e87;
+      font-weight: 700;
+    }
+
+    .product-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: #fafafa;
+      border: 1px solid #e4e4e4;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.05);
+      margin-bottom: 1.5rem;
+    }
+
+    .product-thumb img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.2);
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      font-size: .9rem;
+      color: #1b1e3c;
+    }
+
+    .product-info .name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #140e87;
+      margin-bottom: .25rem;
+    }
+
+    .product-info .price {
+      font-weight: 700;
+      color: #140e87;
+      margin-bottom: .25rem;
+    }
+
+    .product-info .stock {
+      font-size: .8rem;
+      color: #444;
+    }
+
+    /* CONTROLE DE QUANTIDADE */
+    .quantity-block {
+      background: #fff;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      padding: 1rem;
+      display: inline-flex;
+      flex-direction: column;
+      max-width: 240px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    }
+
+    .quantity-label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: #140e87;
+      margin-bottom: .5rem;
+    }
+
+    .quantity-input-row {
+      display: flex;
+      align-items: center;
+      border: 1px solid #b9b9b9;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .qty-btn {
+      background: #eef2ff;
+      color: #140e87;
+      font-weight: 700;
+      border: none;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .qty-btn:active {
+      background:#dce2ff;
+    }
+
+    .qty-input {
+      width: 60px;
+      text-align: center;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .qty-hint {
+      font-size: .7rem;
+      color: #666;
+      margin-top: .5rem;
+    }
+
+    /* LADO DIREITO (RESUMO E CONFIRMAÇÃO) */
+    .summary-side {
+      background: #140e87;
+      color: #fff;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      box-shadow: 0 16px 40px rgba(20,14,135,.5);
+      min-height: 260px;
+    }
+
+    .summary-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      line-height: 1.3;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: .9rem;
+      margin-bottom: .5rem;
+    }
+
+    .summary-total {
+      border-top: 1px solid rgba(255,255,255,.25);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .confirm-btn {
+      margin-top: 2rem;
+      width: 100%;
+      background: #00f2fe;
+      color: #140e87;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      padding: .9rem 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,242,254,.45);
+      transition: all .2s ease;
+    }
+    .confirm-btn:hover {
+      background: #00cbe6;
+      box-shadow: 0 14px 32px rgba(0,242,254,.6);
+      transform: translateY(-2px);
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      font-size: .8rem;
+      line-height: 1.4;
+      min-height: 2.4em;
+      white-space: pre-line;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 720px) {
+      .checkout-card {
+        grid-template-columns: 1fr;
+      }
+      .summary-side {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-card">
+    <!-- LADO ESQUERDO -->
+    <div class="left-side">
+      <h1>Finalizar Compra</h1>
+
+      <!-- Produto selecionado -->
+      <div class="product-row">
+        <div class="product-thumb">
+          <img id="prod-image" src="" alt="Produto">
+        </div>
+        <div class="product-info">
+          <div class="name" id="prod-name">Nome do Produto</div>
+          <div class="price">R$ <span id="prod-price">0,00</span></div>
+          <div class="stock">Estoque: <span id="prod-stock">--</span></div>
+        </div>
+      </div>
+
+      <!-- Quantidade -->
+      <div class="quantity-block">
+        <div class="quantity-label">Quantidade</div>
+
+        <div class="quantity-input-row">
+          <button class="qty-btn" id="btn-minus">-</button>
+          <input class="qty-input" id="qty-input" type="number" min="1" value="1">
+          <button class="qty-btn" id="btn-plus">+</button>
+        </div>
+
+        <div class="qty-hint" id="qty-hint">Máximo disponível: --</div>
+      </div>
+    </div>
+
+    <!-- LADO DIREITO -->
+    <aside class="summary-side">
+      <div class="summary-title">
+        Resumo da compra
+      </div>
+
+      <div class="summary-line">
+        <span>Subtotal</span>
+        <span id="summary-subtotal">R$ 0,00</span>
+      </div>
+
+      <div class="summary-line">
+        <span>Frete</span>
+        <span>R$ 0,00</span>
+      </div>
+
+      <div class="summary-total">
+        <span>Total</span>
+        <span id="summary-total">R$ 0,00</span>
+      </div>
+
+      <button class="confirm-btn" id="confirm-btn">Confirmar Compra</button>
+
+      <div class="feedback" id="feedback-text"></div>
+    </aside>
+  </div>
+
+  <script>
+    // pega ID da URL /checkout/<id>
+    function getProductIdFromPath() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      return parseInt(parts[parts.length - 1], 10);
+    }
+
+    // formata preço bonitinho em R$
+    function formatPrice(val) {
+      return 'R$ ' + Number(val).toFixed(2).replace('.', ',');
+    }
+
+    // estado atual em memória
+    let productData = null;
+    let currentQty = 1;
+
+    const imgEl       = document.getElementById('prod-image');
+    const nameEl      = document.getElementById('prod-name');
+    const priceEl     = document.getElementById('prod-price');
+    const stockEl     = document.getElementById('prod-stock');
+    const qtyInput    = document.getElementById('qty-input');
+    const qtyHint     = document.getElementById('qty-hint');
+    const subtotalEl  = document.getElementById('summary-subtotal');
+    const totalEl     = document.getElementById('summary-total');
+    const feedbackEl  = document.getElementById('feedback-text');
+    const btnMinus    = document.getElementById('btn-minus');
+    const btnPlus     = document.getElementById('btn-plus');
+    const confirmBtn  = document.getElementById('confirm-btn');
+
+    // atualiza os valores de subtotal/total no lado direito
+    function updateTotals() {
+      if (!productData) return;
+      const unit = Number(productData.price || 0);
+      const subtotal = unit * currentQty;
+
+      subtotalEl.textContent = formatPrice(subtotal);
+      totalEl.textContent    = formatPrice(subtotal);
+    }
+
+    // garante que quantidade nunca passa o estoque nem vai pra zero
+    function clampQty(q) {
+      if (!productData) return 1;
+      const maxStock = Number(productData.stock || 0);
+      if (q < 1) q = 1;
+      if (q > maxStock) q = maxStock;
+      return q;
+    }
+
+    function syncQtyInput() {
+      qtyInput.value = currentQty;
+      qtyHint.textContent = "Máximo disponível: " + (productData ? productData.stock : "--");
+      updateTotals();
+    }
+
+    // carregar dados do produto da API pública
+    async function loadProduct() {
+      const prodId = getProductIdFromPath();
+      if (!prodId) return;
+
+      const res = await fetch(`/api/public/products/${prodId}`);
+      if (!res.ok) {
+        feedbackEl.textContent = "Produto não encontrado.";
+        return;
+      }
+
+      productData = await res.json();
+
+      // preencher UI
+      imgEl.src = productData.image
+        ? `/static/images/${productData.image}`
+        : "{{ url_for('static', filename='images/no-image.png') }}";
+      imgEl.alt = productData.name || "Produto";
+
+      nameEl.textContent  = productData.name || "Produto sem nome";
+      priceEl.textContent = Number(productData.price || 0).toFixed(2).replace('.', ',');
+      stockEl.textContent = productData.stock ?? "--";
+
+      // seta qtd inicial 1 e ajusta limites
+      currentQty = 1;
+      syncQtyInput();
+      updateTotals();
+
+      document.title = "Finalizar Compra - " + (productData.name || "Produto");
+    }
+
+    // eventos dos botões + e -
+    btnMinus.addEventListener('click', () => {
+      currentQty = clampQty(currentQty - 1);
+      syncQtyInput();
+    });
+    btnPlus.addEventListener('click', () => {
+      currentQty = clampQty(currentQty + 1);
+      syncQtyInput();
+    });
+
+    // evento quando o usuário digita manualmente
+    qtyInput.addEventListener('input', () => {
+      const raw = parseInt(qtyInput.value, 10) || 1;
+      currentQty = clampQty(raw);
+      syncQtyInput();
+    });
+
+    // confirmar compra
+    confirmBtn.addEventListener('click', async () => {
+      if (!productData) return;
+
+      const body = {
+        product_id: productData.id,
+        quantity: currentQty
+      };
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // erro tipo estoque insuficiente
+        feedbackEl.style.color = "#ff4d4f";
+        feedbackEl.textContent = data.message || "Erro ao processar compra.";
+        return;
+      }
+
+      // sucesso
+      feedbackEl.style.color = "#00f2fe";
+      feedbackEl.textContent =
+        `✅ ${data.message}\n` +
+        `Estoque restante: ${data.remaining_stock}\n` +
+        `Total pago: ${formatPrice(data.total_price)}`;
+
+      // atualiza estoque mostrado na tela pós-compra
+      productData.stock = data.remaining_stock;
+      stockEl.textContent = data.remaining_stock;
+      currentQty = clampQty(currentQty); // caso estoque diminuiu
+      syncQtyInput();
+    });
+
+    // inicializa quando abrir a página
+    document.addEventListener('DOMContentLoaded', loadProduct);
+  </script>
+
+</body>
+</html>

@@ -70,7 +70,7 @@ def login_api():
 
     data = request.get_json() or {}
     username = (data.get('username') or '').strip()
-    password = data.get('password') or ''
+    password = (data.get('password') or '').strip()
 
     if not username or not password:
         return jsonify({'message': 'Informe usuário e senha.'}), 400

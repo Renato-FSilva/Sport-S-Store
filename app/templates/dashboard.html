@@ -11,25 +11,98 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
-    body { font-family: 'Inter', sans-serif; background: #f5f6fa; margin: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+    }
+
     .dashboard-header {
       background: linear-gradient(to right, #140e87, #4a90e2);
-      padding: 1rem 2rem; color: #fff;
-      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .tabs { display: flex; background: #fde3a7; padding: 0.5rem 2rem; gap: 20px; }
-    .tabs button { background: none; border: none; font-size: 1rem; font-weight: 600; color: #140e87; cursor: pointer; }
-    .tabs button.active, .tabs button:hover { color: #000; border-bottom: 2px solid #140e87; }
-    .tab-content { padding: 2rem; display: none; }
-    .tab-content.active { display: block; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0px 4px 12px rgba(0,0,0,0.1); }
-    table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-    table th { background: #140e87; color: #fff; }
-    table tr:hover { background: #f1f1f1; }
-    .btn-action { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-right: 5px; }
+
+    .tabs {
+      display: flex;
+      background: #fde3a7;
+      padding: 0.5rem 2rem;
+      gap: 20px;
+    }
+
+    .tabs button {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #140e87;
+      cursor: pointer;
+    }
+
+    .tabs button.active,
+    .tabs button:hover {
+      color: #000;
+      border-bottom: 2px solid #140e87;
+    }
+
+    .tab-content {
+      padding: 2rem;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background: #140e87;
+      color: #fff;
+    }
+
+    table tr:hover {
+      background: #f1f1f1;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-right: 5px;
+    }
+
     .btn-edit { background: #4a90e2; color: #fff; }
     .btn-delete { background: #e74c3c; color: #fff; }
-    .btn-create { background: #2ecc71; color: #fff; padding: 8px 14px; margin-top: 1rem; border: none; border-radius: 8px; cursor: pointer; }
+
+    .btn-create {
+      background: #2ecc71;
+      color: #fff;
+      padding: 8px 14px;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -52,7 +125,14 @@
     <h2>Gerenciar Usuários</h2>
     <button class="btn-create" data-bs-toggle="modal" data-bs-target="#modalUser">+ Criar Usuário</button>
     <table>
-      <thead><tr><th>ID</th><th>Usuário</th><th>Email</th><th>Ações</th></tr></thead>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuário</th>
+          <th>Email</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
       <tbody id="userTable"></tbody>
     </table>
   </div>
@@ -64,7 +144,12 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th><th>Nome</th><th>Descrição</th><th>Preço</th><th>Estoque</th><th>Imagem</th><th>Ações</th>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Preço</th>
+          <th>Estoque</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody id="productTable"></tbody>
@@ -77,7 +162,13 @@
     <button class="btn-create" data-bs-toggle="modal" data-bs-target="#modalCollection">+ Criar Coleção</button>
     <table>
       <thead>
-        <tr><th>ID</th><th>Nome</th><th>Descrição</th><th>Imagem</th><th>Ações</th></tr>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Imagem</th>
+          <th>Ações</th>
+        </tr>
       </thead>
       <tbody id="collectionTable"></tbody>
     </table>
@@ -101,20 +192,65 @@
     </div></div>
   </div>
 
-  <!-- Modal Produto -->
+  <!-- Modal Criar Produto -->
   <div class="modal fade" id="modalProduct" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
       <div class="modal-header"><h5 class="modal-title">Novo Produto</h5></div>
+
       <div class="modal-body">
         <input type="text" id="productName" class="form-control mb-2" placeholder="Nome do Produto">
+
         <textarea id="productDesc" class="form-control mb-2" placeholder="Descrição"></textarea>
+
         <input type="number" id="productPrice" class="form-control mb-2" placeholder="Preço">
-        <input type="number" id="productQty" class="form-control mb-2" placeholder="Quantidade">
+
+        <input type="number" id="productQty" class="form-control mb-2" placeholder="Quantidade em estoque">
+
+        <select id="productCollection" class="form-control mb-2">
+          <option value="">Selecione uma coleção</option>
+        </select>
+
         <input type="file" id="productImage" class="form-control mb-2">
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button class="btn btn-success" onclick="createProduct()">Salvar</button>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Modal Editar Produto -->
+  <div class="modal fade" id="modalEditProduct" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Produto</h5>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="editProductId">
+
+        <label class="form-label">Nome</label>
+        <input type="text" id="editProductName" class="form-control mb-2" placeholder="Nome do Produto">
+
+        <label class="form-label">Descrição</label>
+        <textarea id="editProductDesc" class="form-control mb-2" placeholder="Descrição"></textarea>
+
+        <label class="form-label">Preço (R$)</label>
+        <input type="number" step="0.01" id="editProductPrice" class="form-control mb-2" placeholder="Preço">
+
+        <label class="form-label">Estoque</label>
+        <input type="number" id="editProductStock" class="form-control mb-2" placeholder="Estoque">
+
+        <label class="form-label">Coleção</label>
+        <select id="editProductCollection" class="form-control mb-2">
+          <option value="">Selecione uma coleção</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-success" onclick="saveProductEdit()">Salvar alterações</button>
       </div>
     </div></div>
   </div>
@@ -137,6 +273,11 @@
 
   <!-- ===================== JS ===================== -->
   <script>
+    // cache de coleções em memória
+    let collectionsCache = [];
+    let editProductModal; // instância bootstrap.Modal do modal de edição
+
+    // -------- Navegação / sessão --------
     function openTab(tabId) {
       document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -149,7 +290,7 @@
       window.location.href = '/login';
     }
 
-    // ===== Usuários =====
+    // -------- Usuários --------
     async function loadUsers() {
       const res = await fetch('/admin/users');
       const data = await res.json();
@@ -158,77 +299,91 @@
       data.forEach(u => {
         tbody.innerHTML += `
           <tr>
-            <td>${u.id}</td><td>${u.username}</td><td>${u.email}</td>
-            <td><button class="btn-action btn-delete" onclick="deleteUser(${u.id})">Excluir</button></td>
+            <td>${u.id}</td>
+            <td>${u.username}</td>
+            <td>${u.email}</td>
+            <td>
+              <button class="btn-action btn-delete" onclick="deleteUser(${u.id})">Excluir</button>
+            </td>
           </tr>`;
       });
     }
+
     async function createUser() {
       const name = document.getElementById("userName").value;
       const email = document.getElementById("userEmail").value;
       const pass = document.getElementById("userPassword").value;
+
       await fetch("/api/register", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: name, email: email, password: pass })
       });
+
       loadUsers();
     }
+
     async function deleteUser(id) {
       await fetch(`/admin/users/${id}`, { method: "DELETE" });
       loadUsers();
     }
 
-    // ===== Produtos =====
-    async function loadProducts() {
-      const res = await fetch('/admin/products');
-      const data = await res.json();
-      const tbody = document.getElementById("productTable");
-      tbody.innerHTML = "";
-      data.forEach(p => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${p.id}</td>
-            <td>${p.name}</td>
-            <td>${p.description || ''}</td>
-            <td>R$ ${p.price}</td>
-            <td>${p.quantity || 0}</td>
-            <td><img src="/static/images/${p.image || 'no-image.png'}" width="60"></td>
-            <td><button class="btn-action btn-delete" onclick="deleteProduct(${p.id})">Excluir</button></td>
-          </tr>`;
-      });
-    }
-    async function createProduct() {
-      const formData = new FormData();
-      formData.append("name", document.getElementById("productName").value);
-      formData.append("description", document.getElementById("productDesc").value);
-      formData.append("price", document.getElementById("productPrice").value);
-      formData.append("quantity", document.getElementById("productQty").value);
-      const file = document.getElementById("productImage").files[0];
-      if (file) formData.append("image", file);
-
-      await fetch("/admin/products", { method: "POST", body: formData });
-      loadProducts();
-    }
-    async function deleteProduct(id) {
-      await fetch(`/admin/products/${id}`, { method: "DELETE" });
-      loadProducts();
-    }
-
-    // ===== Coleções =====
+    // -------- Coleções --------
     async function loadCollections() {
       const res = await fetch('/admin/collections');
       const data = await res.json();
+
+      // guarda no cache
+      collectionsCache = data;
+
+      // preenche tabela de coleções
       const tbody = document.getElementById("collectionTable");
       tbody.innerHTML = "";
       data.forEach(c => {
         tbody.innerHTML += `
           <tr>
-            <td>${c.id}</td><td>${c.name}</td><td>${c.description || ''}</td>
+            <td>${c.id}</td>
+            <td>${c.name}</td>
+            <td>${c.description || ''}</td>
             <td><img src="/static/images/${c.image || 'no-image.png'}" width="60"></td>
-            <td><button class="btn-action btn-delete" onclick="deleteCollection(${c.id})">Excluir</button></td>
+            <td>
+              <button class="btn-action btn-delete" onclick="deleteCollection(${c.id})">
+                Excluir
+              </button>
+            </td>
           </tr>`;
       });
+
+      // atualiza selects (criar e editar produto)
+      populateCollectionSelect();
     }
+
+    function populateCollectionSelect() {
+      // select do modal de criar produto
+      const createSelect = document.getElementById("productCollection");
+      if (createSelect) {
+        createSelect.innerHTML = '<option value="">Selecione uma coleção</option>';
+        collectionsCache.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.name;
+          createSelect.appendChild(opt);
+        });
+      }
+
+      // select do modal de editar produto
+      const editSelect = document.getElementById("editProductCollection");
+      if (editSelect) {
+        editSelect.innerHTML = '<option value="">Selecione uma coleção</option>';
+        collectionsCache.forEach(c => {
+          const opt2 = document.createElement('option');
+          opt2.value = c.id;
+          opt2.textContent = c.name;
+          editSelect.appendChild(opt2);
+        });
+      }
+    }
+
     async function createCollection() {
       const formData = new FormData();
       formData.append("name", document.getElementById("collectionName").value);
@@ -236,18 +391,175 @@
       const file = document.getElementById("collectionImage").files[0];
       if (file) formData.append("image", file);
 
-      await fetch("/admin/collections", { method: "POST", body: formData });
-      loadCollections();
-    }
-    async function deleteCollection(id) {
-      await fetch(`/admin/collections/${id}`, { method: "DELETE" });
-      loadCollections();
+      await fetch("/admin/collections", {
+        method: "POST",
+        body: formData
+      });
+
+      await loadCollections();
     }
 
-    // Carregar ao abrir
-    loadUsers();
-    loadProducts();
-    loadCollections();
+    async function deleteCollection(id) {
+      await fetch(`/admin/collections/${id}`, { method: "DELETE" });
+      await loadCollections();
+    }
+
+    // -------- Produtos --------
+    async function loadProducts() {
+      const res = await fetch('/admin/products');
+      const data = await res.json();
+      const tbody = document.getElementById("productTable");
+      tbody.innerHTML = "";
+
+      data.forEach(p => {
+        const priceFormatted = Number(p.price || 0)
+          .toFixed(2)
+          .replace('.', ',');
+
+        const stockValue = (p.stock !== undefined && p.stock !== null)
+          ? p.stock
+          : 0;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>${p.description || ''}</td>
+            <td>R$ ${priceFormatted}</td>
+            <td>${stockValue}</td>
+            <td>
+              <button class="btn-action btn-edit" onclick="openEditModal(${p.id})">
+                Editar
+              </button>
+              <button class="btn-action btn-delete" onclick="deleteProduct(${p.id})">
+                Excluir
+              </button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    async function createProduct() {
+      const formData = new FormData();
+      formData.append("name", document.getElementById("productName").value);
+      formData.append("description", document.getElementById("productDesc").value);
+      formData.append("price", document.getElementById("productPrice").value);
+      formData.append("quantity", document.getElementById("productQty").value);
+
+      const collectionId = document.getElementById("productCollection").value;
+      if (collectionId) {
+        formData.append("collection_id", collectionId);
+      }
+
+      const file = document.getElementById("productImage").files[0];
+      if (file) formData.append("image", file);
+
+      await fetch("/admin/products", {
+        method: "POST",
+        body: formData
+      });
+
+      await loadProducts();
+
+      document.getElementById("productName").value = "";
+      document.getElementById("productDesc").value = "";
+      document.getElementById("productPrice").value = "";
+      document.getElementById("productQty").value = "";
+      document.getElementById("productCollection").value = "";
+      document.getElementById("productImage").value = "";
+    }
+
+    async function deleteProduct(id) {
+      await fetch(`/admin/products/${id}`, { method: "DELETE" });
+      await loadProducts();
+    }
+
+    // ----- EDITAR PRODUTO -----
+    // abre modal de edição já preenchido
+    async function openEditModal(productId) {
+      // garante que temos a instância do modal
+      if (!editProductModal) {
+        const modalEl = document.getElementById('modalEditProduct');
+        editProductModal = new bootstrap.Modal(modalEl);
+      }
+
+      // pega lista de produtos e encontra o item desejado
+      const res = await fetch('/admin/products');
+      const allProducts = await res.json();
+      const prod = allProducts.find(p => p.id === productId);
+      if (!prod) {
+        alert("Produto não encontrado.");
+        return;
+      }
+
+      // garante que as coleções estão atualizadas no select
+      await loadCollections();
+      // depois que loadCollections rodar, populateCollectionSelect() já populou o select.
+      // agora só seleciona a correta no modal de edição:
+      document.getElementById("editProductCollection").value = prod.collection_id || "";
+
+      // preenche os campos
+      document.getElementById("editProductId").value = prod.id;
+      document.getElementById("editProductName").value = prod.name || "";
+      document.getElementById("editProductDesc").value = prod.description || "";
+      document.getElementById("editProductPrice").value = prod.price || "";
+      document.getElementById("editProductStock").value = (prod.stock ?? 0);
+
+      // abre modal
+      editProductModal.show();
+    }
+
+    // salva alterações no produto (PUT /admin/products/<id>)
+    async function saveProductEdit() {
+      const id = document.getElementById("editProductId").value;
+      const name = document.getElementById("editProductName").value;
+      const description = document.getElementById("editProductDesc").value;
+      const price = document.getElementById("editProductPrice").value;
+      const stock = document.getElementById("editProductStock").value;
+      const collection_id = document.getElementById("editProductCollection").value;
+
+      const bodyData = {
+        name,
+        description,
+        price,
+        stock,
+        collection_id
+      };
+
+      const res = await fetch(`/admin/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bodyData)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert("Erro ao salvar: " + (err.message || res.statusText));
+        return;
+      }
+
+      if (editProductModal) {
+        editProductModal.hide();
+      }
+
+      await loadProducts();
+    }
+
+    // -------- Inicialização --------
+    (async function init() {
+      await loadUsers();
+      await loadCollections(); // isso também popula os selects de coleção
+      await loadProducts();
+
+      // toda vez que abrir o modal de criar produto,
+      // atualizamos o select das coleções
+      const productModalEl = document.getElementById('modalProduct');
+      productModalEl.addEventListener('show.bs.modal', async () => {
+        await loadCollections();
+      });
+    })();
   </script>
 </body>
 </html>

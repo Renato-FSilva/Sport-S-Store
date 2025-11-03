@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Carrinho - Sports Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background:#f5f6ff;
+      font-family: "Inter", sans-serif;
+      color:#1b1e3c;
+      margin:0;
+      padding:0;
+    }
+
+    header {
+      background: linear-gradient(to left, #140e87, #4a90e2);
+      color:#fff;
+      padding:1.5rem 3rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .logo { display:flex; align-items:center; gap:12px; }
+    .logo img { height:60px; }
+    .logo span { font-weight:700; font-size:1.6rem; }
+
+    main {
+      max-width: 1000px;
+      margin: 3rem auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.1);
+      padding: 2rem;
+    }
+
+    h1 { text-align:center; color:#140e87; }
+
+    .cart-item {
+      display:grid;
+      grid-template-columns: 100px 1fr 120px 80px 40px;
+      align-items:center;
+      gap:1rem;
+      padding:1rem 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .cart-item img {
+      width:100%;
+      border-radius:8px;
+      object-fit:cover;
+    }
+
+    .cart-name { font-weight:600; }
+    .cart-price, .cart-subtotal { font-weight:700; color:#140e87; }
+
+    .cart-qty input {
+      width:50px;
+      text-align:center;
+      padding:5px;
+      border:1px solid #ccc;
+      border-radius:6px;
+    }
+
+    .remove-btn {
+      background:none;
+      border:none;
+      color:red;
+      font-size:1.2rem;
+      cursor:pointer;
+    }
+
+    .cart-total {
+      text-align:right;
+      font-size:1.2rem;
+      font-weight:800;
+      margin-top:1.5rem;
+      color:#140e87;
+    }
+
+    .actions {
+      text-align:right;
+      margin-top:1rem;
+    }
+
+    .btn {
+      padding:12px 18px;
+      border:none;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    .btn-primary {
+      background:#140e87;
+      color:#fff;
+    }
+    .btn-primary:hover {
+      background:#0f0b6f;
+    }
+
+    .btn-outline {
+      background:#eef2ff;
+      color:#140e87;
+      margin-right:10px;
+    }
+    .btn-outline:hover {
+      background:#dfe5ff;
+    }
+
+    .empty {
+      text-align:center;
+      color:#666;
+      padding:2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="logo">
+      <span>Sports Store</span>
+    </div>
+    <button class="btn btn-outline" id="logoutBtn">Sair</button>
+  </header>
+
+  <main>
+    <h1>Meu Carrinho</h1>
+    <div id="cart-list"></div>
+    <div class="cart-total" id="cart-total"></div>
+
+    <div class="actions">
+      <button class="btn btn-outline" id="continuarBtn">Continuar comprando</button>
+      <button class="btn btn-primary" id="finalizarBtn">Finalizar compra</button>
+    </div>
+  </main>
+
+  <script>
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    });
+
+    // Pegar carrinho do localStorage
+    function getCart() {
+      const c = localStorage.getItem('cart');
+      return c ? JSON.parse(c) : [];
+    }
+    function saveCart(cart) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Renderizar itens
+    function renderCart() {
+      const cart = getCart();
+      const container = document.getElementById('cart-list');
+      const totalEl = document.getElementById('cart-total');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = '<p class="empty">Seu carrinho está vazio 🛒</p>';
+        totalEl.textContent = '';
+        return;
+      }
+
+      let total = 0;
+      cart.forEach((item, index) => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+
+        container.innerHTML += `
+          <div class="cart-item">
+            <img src="/static/images/${item.image || 'no-image.png'}" alt="${item.name}">
+            <div class="cart-name">${item.name}</div>
+            <div class="cart-price">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
+            <div class="cart-qty">
+              <input type="number" min="1" value="${item.qty}" data-index="${index}">
+            </div>
+            <div class="cart-subtotal">R$ ${subtotal.toFixed(2).replace('.', ',')}</div>
+            <button class="remove-btn" data-index="${index}">&times;</button>
+          </div>
+        `;
+      });
+
+      totalEl.textContent = 'Total: R$ ' + total.toFixed(2).replace('.', ',');
+
+      // Atualizar quantidades
+      document.querySelectorAll('.cart-qty input').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const i = e.target.dataset.index;
+          const cart = getCart();
+          const newQty = parseInt(e.target.value) || 1;
+          cart[i].qty = newQty;
+          saveCart(cart);
+          renderCart();
+        });
+      });
+
+      // Remover item
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = e.target.dataset.index;
+          const cart = getCart();
+          cart.splice(i, 1);
+          saveCart(cart);
+          renderCart();
+        });
+      });
+    }
+
+    // Botões
+    document.getElementById('continuarBtn').addEventListener('click', () => {
+      window.location.href = '/home';
+    });
+
+    document.getElementById('finalizarBtn').addEventListener('click', () => {
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert('Seu carrinho está vazio!');
+        return;
+      }
+
+      // Simulação: leva pro checkout do primeiro produto
+      const first = cart[0];
+      window.location.href = `/checkout/${first.id}`;
+    });
+
+    // Inicializa
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>

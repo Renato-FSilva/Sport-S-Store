@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Store - Coleção</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Header */
+    .header {
+      background: linear-gradient(to left, #140e87, #4a90e2);
+      padding: 1.5rem 3rem;
+    }
+    .header-content { display:flex; justify-content:space-between; align-items:center; }
+    .logo { display:flex; flex-direction:row; align-items:center; gap:12px; }
+    .logo img { height:80px; }
+    .logo span { color:#fff; font-size:1.8rem; font-weight:bold; white-space:nowrap; }
+    .btn-sair {
+      padding: 10px 22px; margin-left: 40px;
+      background:#00f2fe; color:#140e87; border:none; border-radius:25px;
+      font-weight:600; font-size:1rem; cursor:pointer; transition:all .3s ease;
+      box-shadow: 0 2px 8px rgba(0,242,254,.25);
+    }
+    .btn-sair:hover { background:#00cbe6; transform: translateY(-2px); box-shadow:0 4px 12px rgba(0,242,254,.4); }
+
+    /* Banner da coleção */
+    .collection-hero {
+      position: relative;
+      min-height: 40vh;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; text-align: center;
+      background: #0f1266;
+      overflow: hidden;
+    }
+    .collection-hero img.bg {
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit: cover; filter: brightness(.45);
+    }
+    .collection-hero .content {
+      position: relative; z-index: 2; padding: 2rem;
+      max-width: 900px;
+    }
+    .collection-hero h1 { font-size: 2.4rem; margin-bottom: .5rem; }
+    .collection-hero p { font-size: 1.05rem; opacity: .95; }
+    .badge-collection {
+      display:inline-flex; align-items:center; gap:8px;
+      background: rgba(0,242,254,.15);
+      border: 1px solid rgba(0,242,254,.45);
+      color: #00f2fe; padding:.35rem .75rem; border-radius:999px; font-weight:600; margin-bottom: .75rem;
+    }
+
+    /* Grade de produtos */
+    .products-section { padding: 3rem 2rem; background: #fff; }
+    .products-section h2 {
+      font-size: 1.8rem; color: #140e87; text-align:center; margin-bottom: 1.5rem;
+    }
+    .products-grid {
+      display:grid; gap:22px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      max-width: 1200px; margin: 0 auto;
+    }
+    .product-card {
+      border-radius: 16px; overflow: hidden; background: #ffffff;
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+      transition: transform .25s ease, box-shadow .25s ease;
+      display:flex; flex-direction:column;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 26px rgba(0,0,0,.2); }
+    .product-card img {
+      width:100%; height:200px; object-fit:cover; background:#f3f4f8;
+    }
+    .product-info {
+      padding: 14px 14px 16px;
+      display:flex; flex-direction:column; gap:8px; flex:1;
+    }
+    .product-name { font-weight: 700; color:#1b1e3c; line-height:1.3; min-height: 2.6em; }
+    .product-price { color:#140e87; font-weight:800; font-size:1.05rem; }
+    .product-actions { margin-top:auto; display:flex; gap:10px; }
+    .btn-primary-sm, .btn-ghost-sm {
+      flex:1; padding:10px 12px; border-radius:10px; font-weight:700; cursor:pointer; border:none;
+      transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn-primary-sm { background:#140e87; color:#fff; }
+    .btn-primary-sm:hover { background:#0f0b6f; transform: translateY(-1px); box-shadow:0 6px 14px rgba(20,14,135,.25); }
+    .btn-ghost-sm { background:#eef2ff; color:#140e87; }
+    .btn-ghost-sm:hover { background:#e1e8ff; transform: translateY(-1px); }
+
+    /* Footer */
+    .footer { background: linear-gradient(135deg, #4facfe 0%, #2b3bb5 50%, #140e87 100%); color:#fff; padding:2rem 3rem; }
+
+    .empty { text-align:center; color:#666; padding: 2rem 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Sports Store Logo">
+        <span>Sports Store</span>
+      </div>
+      <button id="logoutBtn" class="btn-sair">Sair</button>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <section class="collection-hero">
+    <img id="collection-hero-image" class="bg" src="{{ url_for('static', filename='images/no-image.png') }}" alt="">
+    <div class="content">
+      <div class="badge-collection"><i class="fa fa-layer-group"></i> <span id="badge-name">Coleção</span></div>
+      <h1 id="collection-title">Carregando...</h1>
+      <p id="collection-desc">Espere um instante, estamos preparando sua coleção.</p>
+    </div>
+  </section>
+
+  <!-- Produtos -->
+  <section class="products-section">
+    <h2>Produtos desta coleção</h2>
+    <div id="products" class="products-grid"></div>
+    <div id="empty" class="empty" style="display:none;">Nenhum produto cadastrado nesta coleção ainda.</div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      <img src="{{ url_for('static', filename='images/logo-sports.png') }}" alt="Logo" class="footer-logo" style="width:100px;margin-bottom:10px;">
+      <p>A Sports Store é sua loja online para moda esportiva de qualidade.</p>
+    </div>
+    <div class="footer-center">
+      <h4 style="color:#00f2fe;">Suporte</h4>
+      <p>Email: contato@sportsstore.com</p>
+      <p>Telefone: (11) 99999-9999</p>
+    </div>
+    <div class="footer-right">
+      <h4 style="color:#00f2fe;">Redes Sociais</h4>
+      <div class="social-icons" style="display:flex;flex-direction:column;gap:10px;">
+        <a href="#" style="color:#fff;text-decoration:none;"><i class="fab fa-instagram"></i> @sports_store</a>
+        <a href="#" style="color:#fff;text-decoration:none;"><i class="fab fa-facebook"></i> @sports_store</a>
+        <a href="#" style="color:#fff;text-decoration:none;"><i class="fab fa-twitter"></i> @sports_store</a>
+      </div>
+    </div>
+    <div class="footer-bottom" style="flex-basis:100%;margin-top:1rem;border-top:1px solid rgba(255,255,255,.2);padding-top:1rem;text-align:center;">
+      © 2025 Sports Store. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script>
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    });
+
+    // Helpers de redirecionamento
+    function irParaCheckout(prodId) {
+      window.location.href = `/checkout/${prodId}`;
+    }
+    function verDetalhes(prodId) {
+      window.location.href = `/produto/${prodId}`;
+    }
+
+    // ID da coleção
+    function getCollectionIdFromPath() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      return parseInt(parts[parts.length - 1], 10);
+    }
+
+    // Carregar coleção e produtos
+    async function loadCollectionPage() {
+      const collectionId = getCollectionIdFromPath();
+      if (!collectionId) return;
+
+      // Busca info da coleção
+      const colRes = await fetch('/admin/collections');
+      const collections = await colRes.json();
+      const current = collections.find(c => c.id === collectionId);
+
+      const titleEl = document.getElementById('collection-title');
+      const descEl  = document.getElementById('collection-desc');
+      const badgeEl = document.getElementById('badge-name');
+      const heroImg = document.getElementById('collection-hero-image');
+
+      if (current) {
+        titleEl.textContent = current.name || 'Coleção';
+        badgeEl.textContent = current.name || 'Coleção';
+        descEl.textContent  = current.description || 'Confira os melhores itens desta coleção.';
+        heroImg.src = current.image ? `/static/images/${current.image}` : `{{ url_for('static', filename='images/no-image.png') }}`;
+        heroImg.alt = current.name || 'Coleção';
+        document.title = `Sports Store - ${current.name}`;
+      } else {
+        titleEl.textContent = 'Coleção não encontrada';
+        descEl.textContent  = 'A coleção informada não foi localizada.';
+      }
+
+      // Busca produtos da coleção
+      const prodRes = await fetch(`/api/public/collections/${collectionId}/products`);
+      const products = await prodRes.json();
+
+      const grid = document.getElementById('products');
+      const empty = document.getElementById('empty');
+      grid.innerHTML = '';
+
+      if (!products.length) {
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        products.forEach(p => {
+          const imgSrc = p.image ? `/static/images/${p.image}` : `{{ url_for('static', filename='images/no-image.png') }}`;
+          grid.innerHTML += `
+            <div class="product-card">
+              <img src="${imgSrc}" alt="${p.name}">
+              <div class="product-info">
+                <div class="product-name">${p.name}</div>
+                <div class="product-price">R$ ${Number(p.price).toFixed(2).replace('.', ',')}</div>
+                <div class="product-actions">
+                  <button class="btn-primary-sm" onclick="irParaCheckout(${p.id})">Comprar</button>
+                  <button class="btn-ghost-sm" onclick="verDetalhes(${p.id})">Detalhes</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCollectionPage);
+  </script>
+</body>
+</html>

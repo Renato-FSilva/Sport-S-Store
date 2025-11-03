@@ -5,10 +5,9 @@ class Collection(db.Model):
     __tablename__ = "collections"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False, index=True)
     description = db.Column(db.Text, nullable=True)
-    image = db.Column(db.String(255), nullable=True)  # caminho da imagem
-
+    image = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
